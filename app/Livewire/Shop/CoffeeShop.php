@@ -8,7 +8,7 @@ use Livewire\Attributes\Title;
 
 class CoffeeShop extends Component
 {
-    #[Title('POS')]
+    #[Title('Products')]
 
     public $cart = [];
     
