@@ -55,9 +55,20 @@
                                 class="rounded-xl bg-white p-4 text-left shadow transition hover:scale-105 hover:shadow-lg"
                             >
 
-                                <div class="mb-4 flex h-32 items-center justify-center rounded-lg bg-gray-100 text-5xl">
-                                    ☕
-                                </div>
+                                @if($product->image)
+
+                                    <img
+                                        src="{{ asset('storage/'.$product->image) }}"
+                                        class="mb-4 flex h-32 items-center justify-center rounded-lg bg-gray-100 text-5xl"
+                                    >
+
+                                @else
+
+                                    <div class="mb-4 flex h-32 items-center justify-center rounded-lg bg-gray-100 text-5xl">
+                                        ☕
+                                    </div>
+
+                                @endif
 
                                 <h2 class="font-semibold">
                                     {{ $product->name }}
@@ -180,6 +191,7 @@
 
 
                             <button
+                                wire:click="checkout"
                                 class="w-full rounded-lg bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700"
                             >
                                 CHECKOUT

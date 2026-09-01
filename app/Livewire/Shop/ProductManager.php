@@ -3,6 +3,7 @@
 namespace App\Livewire\Shop;
 
 use App\Models\Products;
+use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -10,17 +11,17 @@ class ProductManager extends Component
 {
     use WithFileUploads;
 
+    #[Rule('required|min:2')]
     public $name = '';
-    public $category = 'Coffee';
-    public $price = '';
-    public $image;
 
-    protected $rules = [
-        'name' => 'required|min:2',
-        'category' => 'required',
-        'price' => 'required|numeric|min:1',
-        'image' => 'nullable|image|max:2048',
-    ];
+    #[Rule('required')]
+    public $category = 'Coffee';
+
+    #[Rule('required|numeric|min:1')]
+    public $price = '';
+
+    #[Rule('nullable|image|max:2048')]
+    public $image;
 
     public function saveProduct()
     {
@@ -36,7 +37,7 @@ class ProductManager extends Component
             'name' => $this->name,
             'category' => $this->category,
             'price' => $this->price,
-            'image' => $this->image,
+            'image' => $imagePath,
             'is_available' => true,
         ]);
 
@@ -44,6 +45,14 @@ class ProductManager extends Component
         $this->category = 'Coffee';
 
         session()->flash('success', 'Product added successfully');
+    }
+
+    public function delete($productId)
+    {
+        $product = Products::findorFail($productId);
+        $product->delete();
+
+        session()->flash('success', 'Product deleted successfully');
     }
 
     public function render()

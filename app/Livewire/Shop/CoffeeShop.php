@@ -4,6 +4,9 @@ namespace App\Livewire\Shop;
 
 use Livewire\Component;
 use App\Models\Products;
+use App\Models\Order;
+use App\Models\OrderItems;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 
 class CoffeeShop extends Component
@@ -13,6 +16,9 @@ class CoffeeShop extends Component
     public $cart = [];
     
     public $selectedCategory = 'All';
+
+    public $paymentMethod = 'Cash';
+    public $amountReceived = 0;
 
     public function addToCart($productId)
     {
@@ -63,6 +69,45 @@ class CoffeeShop extends Component
         return collect($this->cart)->sum(function ($item) {
             return $item['price'] * $item['quantity'];
         });
+    }
+
+    public function checkout()
+    {
+        if (count($this->cart) === 0) {
+            session()->flash('error', 'Cart is empty.');
+            return;
+        }
+
+        DB::transaction(function () {
+
+            $order = Order::create([
+                'order_number' => 'ORD-' . str_pad(Order::count() + 1, 6, '0', STR_PAD_LEFT),
+                'subtotal' => $this->subtotal,
+                'tax' => 0,
+                'discount' => 0,
+                'total' => $this->subtotal,
+                'payment_method' => $this->paymentMethod,
+                'amount_received' => $this->amountReceived ?: $this->subtotal,
+                'change' => max(0, ($this->amountReceived ?: $this->subtotal) - $this->subtotal),
+                'status' => 'Completed',
+            ]);
+
+            foreach ($this->cart as $item) {
+
+                OrderItems::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['id'],
+                    'product_name' => $item['name'],
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $item['price'] * $item['quantity'],
+                ]);
+            }
+        });
+
+        $this->clearCart();
+
+        session()->flash('success', 'Order completed successfully!');
     }
 
     public function render()

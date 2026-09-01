@@ -73,6 +73,12 @@
                                     ₱{{ number_format($product->price,2) }}
                                 </span>
 
+                                <div>
+                                    <button wire:click="delete({{ $product->id }})" class="text-red-500 hover:text-red-700 border rounded-lg px-3 py-1 hover:cursor-pointer">
+                                        Delete
+                                    </button>
+                                </div>
+
                             </div>
 
                         @endforeach
