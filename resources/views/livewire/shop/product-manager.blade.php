@@ -29,7 +29,7 @@
                 <div class="lg:col-span-2 rounded-xl bg-white p-5 shadow">
 
                     <h2 class="mb-4 text-xl font-semibold">
-                        Menu Items
+                        Items Available on the Menu
                     </h2>
 
                     <div class="space-y-3">
